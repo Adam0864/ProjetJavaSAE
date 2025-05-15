@@ -8,7 +8,7 @@ import java.util.Scanner;
 public class scannerFichier {
     public Map<String, ArrayList<Integer>> distanceville(){
         /*Lecture des distances du fichier distances.txt
-         * on obtient un dictionnaire */
+         * on obtient un dictionnaire tel que {Ville,[Distances des villes]} */
         File distance = new File("src/Données/distances.txt");
         Scanner scan = null;
         try {
@@ -64,7 +64,7 @@ public class scannerFichier {
     }
 
     public Map<String, String> lectureScenario(String scenario) throws FileNotFoundException {
-        /*Lecture des scénarios du fichier scénario.txt permettant d'obtenir un dictionnaire transactions tel que (Acheteur,Vendeur) */
+        /*Lecture des scénarios du fichier scénario.txt permettant d'obtenir un dictionnaire transactions tel que (Vendeur,Acheteur) */
         Map<String,String> scenarios = new LinkedHashMap<>();
         for (int i=0;i<9;i++) {
             scenarios.put("s"+i,"scenario_"+i);

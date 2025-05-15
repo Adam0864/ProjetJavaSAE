@@ -5,7 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-public class DistancesVilles {
+public class scenario {
     public static void main(String[] args) throws FileNotFoundException {
 
         File distance = new File("src/Données/distances.txt");
@@ -30,15 +30,5 @@ public class DistancesVilles {
                 distanceville.put(ville, listdistance);
             }
         }
-
-        Map<String,Integer> indicesVilles = new LinkedHashMap<>();
-        int index = 0;
-
-        for (String ville : listVilles) {
-            indicesVilles.put(ville, index);
-            index++;
-        }
-
-
     }
 }

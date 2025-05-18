@@ -1,13 +1,19 @@
 import java.util.*;
 
 public class    GrapheOriente {
-    private TreeMap<Integer, Set<Integer>> chVoisinsSortant;
+    private TreeMap<String, Set<String>> chVoisinsSortant;
 
-    public GrapheOriente(int[][] tabvoisins) {
+    public GrapheOriente(String parScenarioChoisi) throws Exception{
         chVoisinsSortant =new TreeMap<>();
-        for (int indiceSommet=0;indiceSommet< tabvoisins.length;indiceSommet++) {
-            Set VoisinsDuSommet=new TreeSet<Integer>();
-            for (int voisin:tabvoisins[indiceSommet]) {
+        scannerFichier fichierscan = new scannerFichier(parScenarioChoisi);
+        Map<String, String> transactions = new scannerFichier(parScenarioChoisi).getTransactions();
+        for (String vendeur : transactions.keySet()) {
+            String SommetV = fichierscan.getVilleMembreAppli(vendeur);
+            System.out.println(SommetV);
+            String SommetA = fichierscan.getVilleMembreAppli(transactions.get(vendeur));
+            System.out.println(SommetA);
+            Set VoisinsDuSommet=new TreeSet<String>();
+            for (int voisin:transactions.get(vendeur)) {
                 VoisinsDuSommet.add(voisin);
             }
             chVoisinsSortant.put(indiceSommet, VoisinsDuSommet);
@@ -67,7 +73,7 @@ public class    GrapheOriente {
         }
         return deg_max;
     }
-    /*
+
     public TreeMap<Integer, Pair<Integer,Integer>> Parcour_largeur() {
         List<Integer> file=new ArrayList<>();
         file.add(0);
@@ -78,14 +84,13 @@ public class    GrapheOriente {
 
         }
     }
-    */
+
     public TreeMap<Integer, Integer> getDegreEntrant() {
         TreeMap<Integer, Integer> degreEntrant=new TreeMap<>();
         for (int indiceSommet:chVoisinsSortant.keySet()) {
             degreEntrant.put(indiceSommet,0);
         }
         for (int indiceSommet: chVoisinsSortant.keySet()) {
-            degreEntrant.put(indiceSommet, 0);
             for (int voisin: chVoisinsSortant.get(indiceSommet)) {
                 degreEntrant.put(voisin, degreEntrant.get(voisin)+1);
             }

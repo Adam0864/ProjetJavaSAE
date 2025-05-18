@@ -6,51 +6,67 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class scannerFichier {
-    public Map<String, ArrayList<Integer>> distanceville(){
-        /*Lecture des distances du fichier distances.txt
-         * on obtient un dictionnaire tel que {Ville,[Distances des villes]} */
-        File distance = new File("src/Données/distances.txt");
-        Scanner scan = null;
-        try {
-            scan = new Scanner(distance);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+    private String chScenario;
+    private Map<String, String> chTransactions;
+
+    public scannerFichier(String parScenario) throws FileNotFoundException {
+        /*Lecture des scénarios du fichier scénario.txt permettant d'obtenir un dictionnaire transactions tel que (Vendeur,Acheteur) */
+        Map<String,String> scenarios = new LinkedHashMap<>();
+        for (int i=0;i<9;i++) {
+            scenarios.put("s"+i,"scenario_"+i);
         }
+        chScenario = parScenario;
+        File scenarioFile = new File("src/Données/"+scenarios.get(chScenario)+".txt");
+        Scanner scan3 = new Scanner(scenarioFile);
 
-        Map<String, ArrayList<Integer>> distanceville = new LinkedHashMap<>();
+        chTransactions = new LinkedHashMap<>();
+
+        while (scan3.hasNextLine()) {
+            String line = scan3.nextLine();
+            String[] split = line.split(" -> ");
+            chTransactions.put(split[0], split[1]);
+        }
+    }
 
 
-        while (scan.hasNextLine()) {
-            String line = scan.nextLine();
-            String[] split = line.trim().split("\\s+");
 
-            if (split.length > 0) {
-                String ville = split[0];
-                ArrayList<Integer> listdistance = new ArrayList<>();
 
-                for (int i = 1; i < split.length; i++) {
-                    listdistance.add(Integer.parseInt(split[i]));
-                }
-
-                distanceville.put(ville, listdistance);
+    public int getDistanceEntreVilles(String parVilleV,String parVilleA) {
+            File distance = new File("src/Données/distances.txt");
+            Scanner scan = null;
+            try {
+                scan = new Scanner(distance);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
             }
-        }
-        return distanceville;
-    }
 
-    public Map<String, Integer> indicesVilles(Map<String, ArrayList<Integer>> distanceville) {
-        /*Indices des villes pour obtenir les distances de chaque villes par rapport à une autre */
-        Map<String, Integer> indices = new LinkedHashMap<>();
-        int index = 0;
+            Map<String, ArrayList<Integer>> distanceVille = new LinkedHashMap<>();
+            Map<String, Integer> indicesVille = new LinkedHashMap<>();
+            int index = 0;
+            while (scan.hasNextLine()) {
+                String line = scan.nextLine().trim();
+                if (line.isEmpty()) continue;
 
-        for (String ville : distanceville.keySet()) {
-            indices.put(ville, index++);
-        }
+                String[] split = line.split("\\s+");
+                String ville = split[0];
 
-        return indices;
-    }
+                // 1) Enregistrement de l'indice
+                indicesVille.put(ville, index++);
 
-    public Map<String, String> membreappli() throws FileNotFoundException {
+                // 2) Lecture des distances
+                ArrayList<Integer> listeDist = new ArrayList<>(split.length - 1);
+                for (int i = 1; i < split.length; i++) {
+                    listeDist.add(Integer.parseInt(split[i]));
+                }
+                distanceVille.put(ville, listeDist);
+
+
+                }
+            scan.close();
+            return distanceVille.get(parVilleV).get(indicesVille.get(parVilleA));
+            }
+
+    public String getVilleMembreAppli(String parMembre) throws FileNotFoundException {
         /*Lecture des distances du fichier distances.txt permettant d'obtenir un dictionnaire memberdic tel que (Membre,Ville)*/
         File memberliste = new File("src/Données/membres_APPLI.txt");
         Scanner scan2 = new Scanner(memberliste);
@@ -60,11 +76,22 @@ public class scannerFichier {
             String[] split = line.split(" ");
             memberdic.put(split[0], split[1]);
         }
-        return memberdic;
+        for(String membre : memberdic.keySet()) {
+            if (membre.equals(parMembre)) {
+                return memberdic.get(membre);
+            }
+        }
+        return null;
     }
 
-    public Map<String, String> lectureScenario(String scenario) throws FileNotFoundException {
-        /*Lecture des scénarios du fichier scénario.txt permettant d'obtenir un dictionnaire transactions tel que (Vendeur,Acheteur) */
+    public Map<String, String> getTransactions() {
+        return chTransactions;
+    }
+}
+
+
+    /*public Map<String, String> lectureScenario(String scenario) throws FileNotFoundException {
+        //Lecture des scénarios du fichier scénario.txt permettant d'obtenir un dictionnaire transactions tel que (Vendeur,Acheteur)
         Map<String,String> scenarios = new LinkedHashMap<>();
         for (int i=0;i<9;i++) {
             scenarios.put("s"+i,"scenario_"+i);
@@ -80,7 +107,5 @@ public class scannerFichier {
             transactions.put(split[0], split[1]);
         }
         return transactions;
-    }
+    }*/
 
-
-}

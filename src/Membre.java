@@ -29,4 +29,22 @@ public class Membre {
     public Ville getChVille() {
         return chVille;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Membre)) return false;
+        Membre m = (Membre) o;
+        return chNomMembre.equals(m.chNomMembre);
+    }
+
+    @Override
+    public int hashCode() {
+        return chNomMembre.hashCode();
+    }
+
+
+    public String toString() {
+        return chNomMembre;
+    }
 }

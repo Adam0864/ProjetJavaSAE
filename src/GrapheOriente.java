@@ -2,21 +2,19 @@ import java.util.*;
 
 public class    GrapheOriente {
     private TreeMap<String, Set<String>> chVoisinsSortant;
+    private Ville chVille;
 
-    /*public GrapheOriente(String parScenarioChoisi) throws Exception{
+    public GrapheOriente(Scenario parScenarioChoisi) throws Exception{
         chVoisinsSortant =new TreeMap<>();
-        Scenario fichierscan = new Scenario(parScenarioChoisi);
-        Map<String, String> transactions = new Scenario(parScenarioChoisi).getTransactions();
-        for (String vendeur : transactions.keySet()) {
-            String SommetV = fichierscan.getVilleMembreAppli(vendeur);
+        // dictionnaire de forme (Vendeur,Acheteur)
+        Map<Membre, Membre> transactions = parScenarioChoisi.getTransactions();
+        for (Membre vendeur : transactions.keySet()) {
+            Ville SommetV = vendeur.getChVille();
             System.out.println(SommetV);
-            String SommetA = fichierscan.getVilleMembreAppli(transactions.get(vendeur));
+            Ville SommetA = transactions.get(vendeur).getChVille();
             System.out.println(SommetA);
             Set VoisinsDuSommet=new TreeSet<String>();
-            for (int voisin:transactions.get(vendeur)) {
-                VoisinsDuSommet.add(voisin);
-            }
-            chVoisinsSortant.put(indiceSommet, VoisinsDuSommet);
+
         }
     }
 
@@ -124,6 +122,6 @@ public class    GrapheOriente {
             num.add(s);
         }
         return num;
-    }*/
+    }
 
 }

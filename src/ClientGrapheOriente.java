@@ -1,5 +1,5 @@
 public class ClientGrapheOriente {
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         int[][] tabVoisins={
                 {1,2},
                 {},
@@ -15,5 +15,5 @@ public class ClientGrapheOriente {
         }
 
         System.out.println(g.triTopologique());
-    }
+    }*/
 }

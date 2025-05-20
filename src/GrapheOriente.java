@@ -3,10 +3,10 @@ import java.util.*;
 public class    GrapheOriente {
     private TreeMap<String, Set<String>> chVoisinsSortant;
 
-    public GrapheOriente(String parScenarioChoisi) throws Exception{
+    /*public GrapheOriente(String parScenarioChoisi) throws Exception{
         chVoisinsSortant =new TreeMap<>();
-        scannerFichier fichierscan = new scannerFichier(parScenarioChoisi);
-        Map<String, String> transactions = new scannerFichier(parScenarioChoisi).getTransactions();
+        Scenario fichierscan = new Scenario(parScenarioChoisi);
+        Map<String, String> transactions = new Scenario(parScenarioChoisi).getTransactions();
         for (String vendeur : transactions.keySet()) {
             String SommetV = fichierscan.getVilleMembreAppli(vendeur);
             System.out.println(SommetV);
@@ -124,6 +124,6 @@ public class    GrapheOriente {
             num.add(s);
         }
         return num;
-    }
+    }*/
 
 }

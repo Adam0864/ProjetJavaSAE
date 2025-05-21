@@ -9,6 +9,7 @@ public class    GrapheOriente {
     private ArrayList<String> chChemin;
     private ArrayList<String> chSource;
     private int chDegreEntrant;
+    private int distance;
 
     public GrapheOriente(Scenario parScenarioChoisi) throws Exception{
         chVoisinsSortant =new TreeMap<>();

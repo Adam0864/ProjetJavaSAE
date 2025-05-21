@@ -1,3 +1,4 @@
+package modele;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -33,7 +34,6 @@ public class Ville {
                 listeDist.add(Integer.parseInt(split[i]));
             }
             DistanceVille.put(ville, listeDist);
-
         }
         scan.close();
         chDistanceVille = DistanceVille.get(parNom);

@@ -1,4 +1,4 @@
-import java.io.FileNotFoundException;
+package modele;
 
 public class ClientScenario {
     public static void main(String[] args) throws Exception {

@@ -1,3 +1,5 @@
+package modele;
+
 public class ClientMembre {
     public static void main(String[] args) throws Exception {
         Membre Salamèche = new Membre("Salamèche");

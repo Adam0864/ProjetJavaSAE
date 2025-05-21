@@ -1,3 +1,4 @@
+package modele;
 import java.util.*;
 
 public class    GrapheOriente {
@@ -18,7 +19,7 @@ public class    GrapheOriente {
         }
     }
 
-    public String toString() {
+    /*public String toString() {
         String resultat="";
         resultat+="ordre : "+this.getOrdre()+"\n";
         resultat+="taille : "+this.getTaille()+"\n";
@@ -122,6 +123,6 @@ public class    GrapheOriente {
             num.add(s);
         }
         return num;
-    }
+    }*/
 
 }

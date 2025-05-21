@@ -1,3 +1,5 @@
+package modele;
+
 public class ClientGrapheOriente {
     /*public static void main(String[] args) {
         int[][] tabVoisins={

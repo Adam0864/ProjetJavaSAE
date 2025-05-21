@@ -1,3 +1,5 @@
+package modele;
+
 public class ClientVille {
     public static void main(String[] args) throws Exception {
         Ville Bordeaux = new Ville("Bordeaux");

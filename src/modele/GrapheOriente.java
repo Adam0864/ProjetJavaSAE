@@ -1,4 +1,5 @@
 package modele;
+import java.io.File;
 import java.util.*;
 
 public class    GrapheOriente {
@@ -15,7 +16,30 @@ public class    GrapheOriente {
             Ville SommetA = transactions.get(vendeur).getChVille();
             System.out.println(SommetA);
             Set VoisinsDuSommet=new TreeSet<String>();
+            File distance = new File("src/Données/distances.txt");
+            Scanner scan = new Scanner(distance);
 
+            Map<String, ArrayList<Integer>> DistanceVille = new LinkedHashMap<>();
+            Map<String, Integer> indicesVille = new LinkedHashMap<>();
+            int index = 0;
+            while (scan.hasNextLine()) {
+                String line = scan.nextLine().trim();
+                if (line.isEmpty()) continue;
+
+                String[] split = line.split("\\s+");
+                String ville = split[0];
+
+                // 1) Enregistrement de l'indice
+                indicesVille.put(ville, index++);
+
+                // 2) Lecture des distances
+                ArrayList<Integer> listeDist = new ArrayList<>(split.length - 1);
+                for (int i = 1; i < split.length; i++) {
+                    listeDist.add(Integer.parseInt(split[i]));
+                }
+                DistanceVille.put(ville, listeDist);
+            }
+            scan.close();
         }
     }
 

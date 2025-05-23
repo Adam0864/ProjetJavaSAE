@@ -4,20 +4,16 @@ import java.util.*;
 
 public class    GrapheOriente {
     private TreeMap<String, Set<String>> chVoisinsSortant;
-    private Ville chVille;
+    private ArrayList<String> chSommets;
     private Map<String, Ville> chDistance;
     private ArrayList<String> chChemin;
     private ArrayList<String> chSource;
-    private int chDegreEntrant;
-    private int distance;
+    private Map<String,Integer> chDegreEntrant;
+    private int DistanceTotal;
 
     public GrapheOriente(Scenario parScenarioChoisi) throws Exception{
-        chVoisinsSortant =new TreeMap<>();
-        chSource =new ArrayList<>();
-        chChemin=new ArrayList<>();
-        chChemin.add("VelizyV");
-        chSource.add("VelizyV");
         chDistance.put("VelizyV", new Ville("Velizy"));
+        chSource.add("VelizyV");
         // dictionnaire de forme (Vendeur,Acheteur)
         Map<Membre, Membre> transactions = parScenarioChoisi.getTransactions();
         ArrayList<String> ListeVendeur = new ArrayList<>();
@@ -25,9 +21,12 @@ public class    GrapheOriente {
         for (Membre vendeur : transactions.keySet()) {
             String SommetV = vendeur.getChVille().toString()+"V";
             chDistance.put(SommetV, vendeur.getChVille());
+            chSommets.add(SommetV);
+            chDegreEntrant.put(SommetV,1);
             String SommetA = transactions.get(vendeur).getChVille().toString()+"A";
             chDistance.put(SommetA, transactions.get(vendeur).getChVille());
-            Set VoisinsDuSommet=new TreeSet<String>();
+            chSommets.add(SommetA);
+            chDegreEntrant.put(SommetA,2);
 
 
             /*File distance = new File("src/Données/distances.txt");
@@ -55,6 +54,32 @@ public class    GrapheOriente {
             }
             scan.close();*/
         }
+    }
+
+    public Map<String,Integer> getDegreEntrant(){
+        return chDegreEntrant;
+    }
+
+    public ArrayList<String> getSources(){
+        return chSource;
+    }
+
+    public ArrayList<Integer> triTopologique() {
+        Map<String, Ville> parDistance = chDistance;
+        Map<String,Integer> degresEntrants = this.getDegreEntrant();
+        ArrayList<String> sources = this.getSources();
+        ArrayList<Integer> num = new ArrayList<>();
+        while (!sources.isEmpty()) {
+            String s = sources.get(0);
+            for (int v : parDistance.get(s).getChDistanceVille(chDistance.get(chVilleVendeur.get(0)))) {
+                degresEntrants.put(v, degresEntrants.get(v) - 1);
+                if (degresEntrants.get(v) == 0) {
+                    sources.add(v);
+                }
+            }
+            num.add(s);
+        }
+        return num;
     }
 
     /*public String toString() {

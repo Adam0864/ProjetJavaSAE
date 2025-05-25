@@ -6,7 +6,6 @@ public class    GrapheOriente {
     private TreeMap<String, LinkedHashSet<String>> chVoisinsSortant;
     private ArrayList<String> chSommets;
     private Map<String, Ville> chDistance;
-
     private Map<String,Integer> chDegreEntrant;
 
     public GrapheOriente(Scenario parScenario) throws Exception {
@@ -20,6 +19,9 @@ public class    GrapheOriente {
         chDistance.put("VelizyV", new Ville("Velizy"));
         chSommets.add("VelizyV");
         chDegreEntrant.put("VelizyV", 0);
+
+        chDistance.put("VelizyA", new Ville("Velizy"));
+        chSommets.add("VelizyA");
         chDegreEntrant.put("VelizyA", 0);
 
         // 3) Pour chaque transaction…
@@ -28,8 +30,12 @@ public class    GrapheOriente {
             String vA = parScenario.getTransactions().get(vendeur).getChVille() + "A";
 
             // Ajout des sommets
-            chSommets.add(vV);
-            chSommets.add(vA);
+            if (!chSommets.contains(vV)) {
+                chSommets.add(vV);
+            }
+            if (!chSommets.contains(vA)) {
+                chSommets.add(vA);
+            }
             chDistance.put(vV, vendeur.getChVille());
             chDistance.put(vA, parScenario.getTransactions().get(vendeur).getChVille());
 
@@ -38,13 +44,25 @@ public class    GrapheOriente {
             chDegreEntrant.putIfAbsent(vA, 0);
 
             // Arcs sortants, premier arc sortant : VelizyV → vV (on part toujours de Velizy)
-            chVoisinsSortant.computeIfAbsent("VelizyV", k -> new LinkedHashSet<>()).add(vV);
-            chDegreEntrant.put(vV, chDegreEntrant.get(vV) + 1);
+            Set<String> s = chVoisinsSortant
+                    .computeIfAbsent("VelizyV", k -> new LinkedHashSet<>());
+            if (s.add(vV)) {
+                chDegreEntrant.put(vV, chDegreEntrant.get(vV) + 1);
+            }
+
 
             chVoisinsSortant.computeIfAbsent(vV, k -> new LinkedHashSet<>()).add(vA);
             chDegreEntrant.put(vA, chDegreEntrant.get(vA) + 1);
-            chVoisinsSortant.computeIfAbsent(vA, k -> new LinkedHashSet<>()).add("VelizyA");
-            chDegreEntrant.put("VelizyA", chDegreEntrant.get("VelizyA") + 1);
+            // Faites plutôt :
+            Set<String> voisinsDeA = chVoisinsSortant
+                    .computeIfAbsent(vA, k -> new LinkedHashSet<>());
+            if (voisinsDeA.add("VelizyA")) {
+                // on incrémente le degré entrant de VelizyA
+                chDegreEntrant.put("VelizyA", chDegreEntrant.get("VelizyA") + 1);
+            }
+
+
+
         }
         // garantir que chaque sommet a bien un ensemble (même vide) dans la liste d'adjacence
         for (String sommet : chSommets) {
@@ -62,8 +80,9 @@ public class    GrapheOriente {
         return chVoisinsSortant.get(parVille);
     }
 
-    public List<String> triTopologique() {
+    public String triTopologique() {
         Map<String,Integer> degEnt = getDegreEntrant();
+        int distancetotal = 0;
 
         // 1) File des sources (degrés 0)
         Deque<String> sources = new ArrayDeque<>();
@@ -80,6 +99,7 @@ public class    GrapheOriente {
             ordre.add(s);
             for (String v : this.getChVoisinsSortant(s)) {
                 degEnt.put(v, degEnt.get(v) - 1);
+                distancetotal += chDistance.get(s).getChDistanceVille(chDistance.get(v));
                 if (degEnt.get(v) == 0) {
                     sources.addLast(v);
                 }
@@ -90,7 +110,7 @@ public class    GrapheOriente {
         if (ordre.size() < chSommets.size()) {
             throw new IllegalStateException("Cycle détecté : tri impossible");
         }
-        return ordre;
+        return ordre + "Distance totale :" + distancetotal;
     }
 
 

@@ -1,7 +1,7 @@
 package modele;
 
 public class ClientGrapheOriente {
-    /*public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         int[][] tabVoisins={
                 {1,2},
                 {},
@@ -10,12 +10,8 @@ public class ClientGrapheOriente {
                 {5},
                 {}
         };
-        GrapheOriente g = new GrapheOriente(tabVoisins);
-        System.out.println("Degrés entrants :");
-        for (var entry : g.getDegreEntrant().entrySet()) {
-            System.out.println("Sommet " + entry.getKey() + " : " + entry.getValue());
-        }
+        GrapheOriente g = new GrapheOriente(new Scenario("s0"));
 
         System.out.println(g.triTopologique());
-    }*/
+    }
 }

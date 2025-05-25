@@ -3,84 +3,96 @@ import java.io.File;
 import java.util.*;
 
 public class    GrapheOriente {
-    private TreeMap<String, Set<String>> chVoisinsSortant;
+    private TreeMap<String, LinkedHashSet<String>> chVoisinsSortant;
     private ArrayList<String> chSommets;
     private Map<String, Ville> chDistance;
-    private ArrayList<String> chChemin;
-    private ArrayList<String> chSource;
+
     private Map<String,Integer> chDegreEntrant;
-    private int DistanceTotal;
 
-    public GrapheOriente(Scenario parScenarioChoisi) throws Exception{
+    public GrapheOriente(Scenario parScenario) throws Exception {
+        // 1) Initialisation des champs
+        chVoisinsSortant    = new TreeMap<>();
+        chSommets           = new ArrayList<>();
+        chDistance          = new LinkedHashMap<>();
+        chDegreEntrant      = new LinkedHashMap<>();
+
+        // 2) A partir de Velizy
         chDistance.put("VelizyV", new Ville("Velizy"));
-        chSource.add("VelizyV");
-        // dictionnaire de forme (Vendeur,Acheteur)
-        Map<Membre, Membre> transactions = parScenarioChoisi.getTransactions();
-        ArrayList<String> ListeVendeur = new ArrayList<>();
-        ArrayList<String> ListeAcheteur = new ArrayList<>();
-        for (Membre vendeur : transactions.keySet()) {
-            String SommetV = vendeur.getChVille().toString()+"V";
-            chDistance.put(SommetV, vendeur.getChVille());
-            chSommets.add(SommetV);
-            chDegreEntrant.put(SommetV,1);
-            String SommetA = transactions.get(vendeur).getChVille().toString()+"A";
-            chDistance.put(SommetA, transactions.get(vendeur).getChVille());
-            chSommets.add(SommetA);
-            chDegreEntrant.put(SommetA,2);
+        chSommets.add("VelizyV");
+        chDegreEntrant.put("VelizyV", 0);
+        chDegreEntrant.put("VelizyA", 0);
 
+        // 3) Pour chaque transaction…
+        for (Membre vendeur : parScenario.getTransactions().keySet()) {
+            String vV = vendeur.getChVille() + "V";
+            String vA = parScenario.getTransactions().get(vendeur).getChVille() + "A";
 
-            /*File distance = new File("src/Données/distances.txt");
-            Scanner scan = new Scanner(distance);
+            // Ajout des sommets
+            chSommets.add(vV);
+            chSommets.add(vA);
+            chDistance.put(vV, vendeur.getChVille());
+            chDistance.put(vA, parScenario.getTransactions().get(vendeur).getChVille());
 
-            Map<String, ArrayList<Integer>> DistanceVille = new LinkedHashMap<>();
-            Map<String, Integer> indicesVille = new LinkedHashMap<>();
-            int index = 0;
-            while (scan.hasNextLine()) {
-                String line = scan.nextLine().trim();
-                if (line.isEmpty()) continue;
+            // Dégrés entrants par défaut : on s’assure que chaque sommet existe dans la map
+            chDegreEntrant.putIfAbsent(vV, 0);
+            chDegreEntrant.putIfAbsent(vA, 0);
 
-                String[] split = line.split("\\s+");
-                String ville = split[0];
+            // Arcs sortants, premier arc sortant : VelizyV → vV (on part toujours de Velizy)
+            chVoisinsSortant.computeIfAbsent("VelizyV", k -> new LinkedHashSet<>()).add(vV);
+            chDegreEntrant.put(vV, chDegreEntrant.get(vV) + 1);
 
-                // 1) Enregistrement de l'indice
-                indicesVille.put(ville, index++);
-
-                // 2) Lecture des distances
-                ArrayList<Integer> listeDist = new ArrayList<>(split.length - 1);
-                for (int i = 1; i < split.length; i++) {
-                    listeDist.add(Integer.parseInt(split[i]));
-                }
-                DistanceVille.put(ville, listeDist);
-            }
-            scan.close();*/
+            chVoisinsSortant.computeIfAbsent(vV, k -> new LinkedHashSet<>()).add(vA);
+            chDegreEntrant.put(vA, chDegreEntrant.get(vA) + 1);
+            chVoisinsSortant.computeIfAbsent(vA, k -> new LinkedHashSet<>()).add("VelizyA");
+            chDegreEntrant.put("VelizyA", chDegreEntrant.get("VelizyA") + 1);
+        }
+        // garantir que chaque sommet a bien un ensemble (même vide) dans la liste d'adjacence
+        for (String sommet : chSommets) {
+            chVoisinsSortant.computeIfAbsent(sommet, k -> new LinkedHashSet<>());
         }
     }
+
 
     public Map<String,Integer> getDegreEntrant(){
         return chDegreEntrant;
     }
 
-    public ArrayList<String> getSources(){
-        return chSource;
+
+    public LinkedHashSet<String> getChVoisinsSortant(String parVille){
+        return chVoisinsSortant.get(parVille);
     }
 
-    public ArrayList<Integer> triTopologique() {
-        Map<String, Ville> parDistance = chDistance;
-        Map<String,Integer> degresEntrants = this.getDegreEntrant();
-        ArrayList<String> sources = this.getSources();
-        ArrayList<Integer> num = new ArrayList<>();
+    public List<String> triTopologique() {
+        Map<String,Integer> degEnt = getDegreEntrant();
+
+        // 1) File des sources (degrés 0)
+        Deque<String> sources = new ArrayDeque<>();
+        for (var e : degEnt.entrySet()) {
+            if (e.getValue() == 0) {
+                sources.addLast(e.getKey());
+            }
+        }
+
+        // 2) Kahn
+        List<String> ordre = new ArrayList<>();
         while (!sources.isEmpty()) {
-            String s = sources.get(0);
-            for (int v : parDistance.get(s).getChDistanceVille(chDistance.get(chVilleVendeur.get(0)))) {
-                degresEntrants.put(v, degresEntrants.get(v) - 1);
-                if (degresEntrants.get(v) == 0) {
-                    sources.add(v);
+            String s = sources.pollFirst();
+            ordre.add(s);
+            for (String v : this.getChVoisinsSortant(s)) {
+                degEnt.put(v, degEnt.get(v) - 1);
+                if (degEnt.get(v) == 0) {
+                    sources.addLast(v);
                 }
             }
-            num.add(s);
         }
-        return num;
+
+        // 3) Détection de cycle
+        if (ordre.size() < chSommets.size()) {
+            throw new IllegalStateException("Cycle détecté : tri impossible");
+        }
+        return ordre;
     }
+
 
     /*public String toString() {
         String resultat="";

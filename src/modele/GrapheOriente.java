@@ -112,11 +112,6 @@ public class    GrapheOriente {
             distancetotal += vDe.getChDistanceVille(vVers);
         }
 
-
-        // 3) Détection de cycle
-        /*if (ordre.size() < chSommets.size()) {
-            throw new IllegalStateException("Cycle détecté : tri impossible");
-        }*/
         return ordre + "Distance totale :" + distancetotal;
     }
 

@@ -2,7 +2,7 @@ package modele;
 
 public class ClientGrapheOriente {
     public static void main(String[] args) throws Exception {
-        GrapheOriente g = new GrapheOriente(new Scenario("s0"));
+        GrapheOriente g = new GrapheOriente(new Scenario("s7"));
 
         System.out.println(g.triTopologique());
     }

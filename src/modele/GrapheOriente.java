@@ -32,12 +32,12 @@ public class    GrapheOriente {
             // Ajout des sommets
             if (!chSommets.contains(vV)) {
                 chSommets.add(vV);
+                chDistance.put(vV, vendeur.getChVille());
             }
             if (!chSommets.contains(vA)) {
                 chSommets.add(vA);
+                chDistance.put(vA, parScenario.getTransactions().get(vendeur).getChVille());
             }
-            chDistance.put(vV, vendeur.getChVille());
-            chDistance.put(vA, parScenario.getTransactions().get(vendeur).getChVille());
 
             // Dégrés entrants par défaut : on s’assure que chaque sommet existe dans la map
             chDegreEntrant.putIfAbsent(vV, 0);
@@ -53,7 +53,7 @@ public class    GrapheOriente {
 
             chVoisinsSortant.computeIfAbsent(vV, k -> new LinkedHashSet<>()).add(vA);
             chDegreEntrant.put(vA, chDegreEntrant.get(vA) + 1);
-            // Faites plutôt :
+
             Set<String> voisinsDeA = chVoisinsSortant
                     .computeIfAbsent(vA, k -> new LinkedHashSet<>());
             if (voisinsDeA.add("VelizyA")) {
@@ -63,7 +63,7 @@ public class    GrapheOriente {
 
 
         }
-        // garantir que chaque sommet a bien un ensemble (même vide) dans la liste d'adjacence
+        // garantie que chaque sommet a bien un ensemble dans la liste d'adjacence
         for (String sommet : chSommets) {
             chVoisinsSortant.computeIfAbsent(sommet, k -> new LinkedHashSet<>());
         }
@@ -84,14 +84,14 @@ public class    GrapheOriente {
         int distancetotal = 0;
 
         // 1) File des sources (degrés 0)
-        Deque<String> sources = new ArrayDeque<>();
+        TreeSet<String> sources = new TreeSet<>();
         for (var e : degEnt.entrySet()) {
             if (e.getValue() == 0) {
-                sources.addLast(e.getKey());
+                sources.add(e.getKey());
             }
         }
 
-        // 2) Kahn
+        // 2) Tri Topologique
         List<String> ordre = new ArrayList<>();
         while (!sources.isEmpty()) {
             String s = sources.pollFirst();
@@ -99,7 +99,7 @@ public class    GrapheOriente {
             for (String v : this.getChVoisinsSortant(s)) {
                 degEnt.put(v, degEnt.get(v) - 1);
                 if (degEnt.get(v) == 0) {
-                    sources.addLast(v);
+                    sources.add(v);
                 }
             }
         }
@@ -111,8 +111,17 @@ public class    GrapheOriente {
             Ville vVers= chDistance.get(vers);
             distancetotal += vDe.getChDistanceVille(vVers);
         }
+        String chemin = "";
+        for (String Villeduparcours : ordre){
+            if (Villeduparcours.equals("VelizyA")) {
+                chemin = chDistance.get(Villeduparcours).getChNom();
+            }
+            else {
+                chemin += chDistance.get(Villeduparcours) + " -> ";
+            }
+        }
 
-        return ordre + "Distance totale :" + distancetotal;
+        return "Chemin : " + chemin + "\n" + "Distance totale :" + distancetotal;
     }
 
 

@@ -1,5 +1,6 @@
 package modele;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -31,7 +32,24 @@ public class Scenario {
     public Map<Membre, Membre> getTransactions() {
         return chTransactions;
     }
+
+    public ArrayList<Membre> getAcheteurs(){
+        ArrayList<Membre> acheteurs = new ArrayList<>();
+        for (Membre m : chTransactions.keySet()) {
+            acheteurs.add(chTransactions.get(m));
+        }
+        return acheteurs;
+    }
+
+    public ArrayList<Membre> getVendeurs(){
+        ArrayList<Membre> vendeurs = new ArrayList<>();
+        for (Membre m : chTransactions.keySet()) {
+            vendeurs.add(m);
+        }
+        return vendeurs;
+    }
 }
+
 
 
     /*public Map<String, String> lectureScenario(String scenario) throws FileNotFoundException {

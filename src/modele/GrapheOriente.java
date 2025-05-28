@@ -119,11 +119,10 @@ public class    GrapheOriente {
             }
             else {
                 chemin += chDistance.get(Villeduparcours) + " -> ";
-                System.out.println(chemin);
             }
         }
 
-        return "Chemin : " + chemin + ordre + "\n" + "Distance totale :" + distancetotal;
+        return "Chemin : " + chemin + "\n" + "Distance totale :" + distancetotal;
     }
 
 

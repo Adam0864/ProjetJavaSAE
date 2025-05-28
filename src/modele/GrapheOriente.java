@@ -112,16 +112,18 @@ public class    GrapheOriente {
             distancetotal += vDe.getChDistanceVille(vVers);
         }
         String chemin = "";
-        for (String Villeduparcours : ordre){
+        for (int indice=0;indice <= ordre.size() - 1;indice++) {
+            String Villeduparcours = ordre.get(indice);
             if (Villeduparcours.equals("VelizyA")) {
-                chemin = chDistance.get(Villeduparcours).getChNom();
+                chemin += chDistance.get(Villeduparcours).getChNom();
             }
             else {
                 chemin += chDistance.get(Villeduparcours) + " -> ";
+                System.out.println(chemin);
             }
         }
 
-        return "Chemin : " + chemin + "\n" + "Distance totale :" + distancetotal;
+        return "Chemin : " + chemin + ordre + "\n" + "Distance totale :" + distancetotal;
     }
 
 
